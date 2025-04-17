@@ -1,3 +1,8 @@
+const rock = document.querySelector(".rock");
+const paper = document.querySelector(".paper");
+const scissors = document.querySelector(".scissors");
+const resultsDiv = document.querySelector(".display");
+
 playGame();
 
 function getComputerChoice(){
@@ -12,57 +17,109 @@ function getComputerChoice(){
     }
 }
 
-function getHumanChoice(){
-    return prompt("Will you choose rock, paper, or scissors?");
-}
-
 function playRound(computerChoice, humanChoice){
     humanChoice = humanChoice.toLowerCase();
 
+    let resultPara = document.querySelector(".result");
+    if(resultPara == null){
+        resultPara = document.createElement("p");
+        resultPara.setAttribute("class", "result");
+        resultsDiv.appendChild(resultPara);
+    }
+
     if(humanChoice === computerChoice){
-        console.log('You both threw ' + humanChoice);
+        resultPara.textContent = 'You both threw ' + humanChoice;
     } else if(humanChoice === 'rock' && computerChoice != 'paper'){
-        console.log('You win! Rock beats scissors!');
+        resultPara.textContent = 'You win! Rock beats scissors!'
         return 'human';
     }else if(humanChoice === 'paper' && computerChoice != 'scissors'){
-        console.log('You win! Paper beats rock!');
+        resultPara.textContent = 'You win! Paper beats rock!'
         return 'human';
     }else if(humanChoice === 'scissors' && computerChoice != 'rock'){
-        console.log('You win! Scissors beats paper!');
+        resultPara.textContent = 'You win! Scissors beats paper!'
         return 'human';
     }else{
-        console.log('You Lose! ' + computerChoice + ' beats ' + humanChoice);
+        resultPara.textContent = 'You Lose! ' + computerChoice + ' beats ' + humanChoice
         return 'computer';
     }
 }
 
 function playGame(){
-    let computerScore = 0;
-    let humanScore = 0;
+
+    rock.addEventListener("click", () => {
+        let result = playRound(getComputerChoice(), 'rock');
+        updateScore(result);
+        checkForWinner();
+    });
+    paper.addEventListener("click", () => {
+        let result = playRound(getComputerChoice(), 'paper');
+        updateScore(result);
+        checkForWinner();
+    });
+    scissors.addEventListener("click", () => {
+        let result = playRound(getComputerChoice(), 'scissors');
+        updateScore(result);
+        checkForWinner();
+    });
+}
+
+function updateScore(result){
+    let textSpanScoreOne = document.querySelector(".computerScore");
     
-    for(let i = 0; i < 5; i++){
-        let result = playRound(getComputerChoice(), getHumanChoice());
+    if(textSpanScoreOne == null){
+        const computerSpan = document.createElement("span");
+        computerSpan.textContent = "Computer score: ";
+        resultsDiv.appendChild(computerSpan);
+        
+        textSpanScoreOne = document.createElement("span");
+        textSpanScoreOne.setAttribute("class", "computerScore");
+        textSpanScoreOne.setAttribute("style", "margin-right: 20px;")
+        resultsDiv.appendChild(textSpanScoreOne);
+        
+        const humanSpan = document.createElement("span");
+        humanSpan.textContent = "Human score: ";
+        resultsDiv.appendChild(humanSpan);
+        
+        textSpanScoreTwo = document.createElement("span");
+        textSpanScoreTwo.setAttribute("class", "humanScore");
+        resultsDiv.appendChild(textSpanScoreTwo);
 
         if(result === 'computer'){
-            computerScore++;
+            textSpanScoreOne.textContent = 1;
+            textSpanScoreTwo.textContent = 0;
         }else if(result === 'human'){
-            humanScore++;
+            textSpanScoreOne.textContent = 0;
+            textSpanScoreTwo.textContent = 1;
+        }else{
+            textSpanScoreOne.textContent = 0;
+            textSpanScoreTwo.textContent = 0;
+        }
+    }else{
+        if(result === 'computer'){
+            let score = parseInt(textSpanScoreOne.textContent);
+            textSpanScoreOne.textContent = ++score;
+        }else if(result === 'human'){
+            let score = parseInt(textSpanScoreTwo.textContent);
+            textSpanScoreTwo.textContent = ++score;
         }
     }
+}
 
-    console.log('GAME OVER!!!!')
+function checkForWinner(){
+    let computerScoreSpan = document.querySelector(".computerScore");
+    let humanScoreSpan = document.querySelector(".humanScore");
 
-    if(humanScore > computerScore){
-        console.log('You win!!! Final Scores')
-        console.log('Your score: ' + humanScore);
-        console.log('Computer\'s score: ' + computerScore);
-    }else if(humanScore < computerScore) {
-        console.log('You Lose! Better luck next time! Final Scores');
-        console.log('Computer\'s score: ' + computerScore);
-        console.log('Your score: ' + humanScore);
-    }else{
-        console.log('You Tied! Better luck next time! Final Scores');
-        console.log('Computer\'s score: ' + computerScore);
-        console.log('Your score: ' + humanScore);
+    let computerScore = parseInt(computerScoreSpan.textContent);
+    let humanScore = parseInt(humanScoreSpan.textContent);
+
+    if(computerScore == 5){
+        let winnerPara = document.createElement("p");
+        winnerPara.textContent = 'You Lose! Better luck next time!';
+        resultsDiv.appendChild(winnerPara);
+    }else if(humanScore == 5){
+        let winnerPara = document.createElement("p");
+        winnerPara.textContent = 'You win!!!';
+        resultsDiv.appendChild(winnerPara);
     }
 }
+
